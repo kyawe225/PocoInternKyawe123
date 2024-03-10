@@ -1,0 +1,45 @@
+﻿@model UserCreateViewModel
+<div class="container">
+    <form method="post">
+        <div class="mb-2">
+            <label class="form-label">Name</label>
+            <input class="form-control" placeholder="Uzumaki naruto" asp-for="UserName" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Display Name</label>
+            <input class="form-control" placeholder="Uzumaki naruto" asp-for="Name" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Email</label>
+            <input class="form-control" placeholder="example@gmail.com" asp-for="Email" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Phone</label>
+            <input class="form-control" placeholder="0924432243342" asp-for="Phone" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" placeholder="****************" asp-for="Password" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" placeholder="condo" asp-for="Address" ></textarea>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Role</label>
+            <select class="form-select" asp-items="ViewBag.roleList" asp-for="RoleId">
+                <option>--SELECT--</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Gender</label>
+            <select class="form-select" asp-items="ViewBag.genderList" asp-for="Gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </div>
+    </form>
+</div>

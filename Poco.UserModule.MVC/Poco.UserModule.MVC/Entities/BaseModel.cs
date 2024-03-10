@@ -2,9 +2,9 @@
 {
 	public class BaseModel
 	{
-		public string Id { set; get; }
-		public DateTime CreatedAt { set; get; }
-		public DateTime UpdatedAt { set; get; }
-		public bool IsDeleted { set; get; }
+		public string Id { set; get; }=Guid.NewGuid().ToString();
+		public DateTime CreatedAt { set; get; } = DateTime.UtcNow;
+		public DateTime UpdatedAt { set; get; } = DateTime.UtcNow;
+		public bool IsDeleted { set; get; } = false;
 	}
 }

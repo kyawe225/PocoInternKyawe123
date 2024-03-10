@@ -1,0 +1,100 @@
+﻿<div class="container">
+    <table class="datatable">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th> 
+                <th>
+                    Display Name
+                </th>                
+                <th>
+                    Role
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Gender
+                </th>
+                <th>
+                    Joined Date
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script>
+        $("document").ready(() => {
+            let datatable = $('.datatable').DataTable({
+                responsive: true,
+                "lengthChange": false,
+                ajax: { url: "/user/list", dataSrc: "data" },
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "userName", orderable: false
+                    },
+                    {
+                        data: "roleName", orderable: false
+                    },
+                    {
+                        data: "phone",orderable:false
+                    },
+                    {
+                        data: "email", orderable: false
+                    },
+                    {
+                        data: "address", orderable: false
+                    },
+                    {
+                        data: "gender", orderable: false, render: (data) => {
+                            return data ? 'male':'female'
+                        }
+                    },
+                    {
+                        data:"joinedAt",orderable:false
+                    },
+                    {
+                        data:null,orderable:false,render: (data)=>{
+                            return $("<div />", { html: data.action }).html();
+                        }
+                    }
+                ]
+            }).on("click", "tbody .delete", (event) => {
+                event.preventDefault();
+                // call ajax
+                $.ajax({
+                    url : event.target.href,
+                    type : "POST",
+                    success : ()=>{
+                        window.location.reload();
+                    } ,
+                    error: (data) => {
+                        console.log(data)
+                    }
+                })
+            });
+
+
+
+
+        })
+    </script>
+}

@@ -1,0 +1,49 @@
+﻿@section Styles{
+    <link rel="stylesheet" href="~/lib/datatable/css/datatable-bootstrap.min.css" />
+}
+<div class="container">
+    <table class="datatable" style="width:100%">
+        <thead>
+            <tr>
+                <td>
+                    Id
+                </td>
+                <td>
+                    Name
+                </td>
+                <td>
+                    Created Date
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script>
+        $("document").ready(() => {
+            let datatable = $('.datatable').DataTable({
+                responsive: true,
+                "lengthChange": false,
+                ajax: { url: "/role/list", dataSrc: "data" },
+                columns: [
+                    {
+                        data: null , render: (data)=>{
+                            return data.name + data.dtCreated
+                        }
+                    },
+                    {
+                        data: "name",orderable:false
+                    },
+                    {
+                        data: "dtCreated",orderable: false
+                    }
+                ]
+            });
+        })
+    </script>
+}

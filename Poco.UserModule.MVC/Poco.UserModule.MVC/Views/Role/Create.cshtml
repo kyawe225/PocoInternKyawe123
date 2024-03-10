@@ -1,0 +1,14 @@
+﻿@model RoleCreateViewModel
+<div class="container"> 
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-2">
+            <label > Name </label>
+            <input type="text" class="form-control" asp-for="Name"  />
+            <span class="text-danger"></span>
+        </div>
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    </form>
+</div>
