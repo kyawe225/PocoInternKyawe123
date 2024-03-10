@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Poco.UserModule.MVC.Entities;
+using Poco.UserModule.MVC.Seeders;
 
 namespace Poco.UserModule.MVC.Contexts
 {
@@ -15,5 +16,14 @@ namespace Poco.UserModule.MVC.Contexts
 		public DbSet<Roles> roles { set; get; }
 		public DbSet<RolePermissions> rolePermissions { set; get; }
 		public DbSet<AdminUser> adminUsers { set; get; }
-	}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+			base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new FeatureConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+            modelBuilder.ApplyConfiguration(new RolePermissionConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+        }
+    }
 }
