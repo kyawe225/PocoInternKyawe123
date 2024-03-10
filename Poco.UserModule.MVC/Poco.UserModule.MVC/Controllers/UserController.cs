@@ -4,9 +4,11 @@ using Poco.UserModule.MVC.Contexts;
 using Poco.UserModule.MVC.Entities;
 using Poco.UserModule.MVC.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Poco.UserModule.MVC.Controllers
 {
+    [Authorize]
 	public class UserController : Controller
 	{
 		private readonly Context _context;
@@ -16,7 +18,11 @@ namespace Poco.UserModule.MVC.Controllers
 		}
 		public IActionResult Index()
 		{
-			return View();
+            if (AuthChecker.IsPassed(HttpContext, "User","View",_context))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
 		}
 
 		[HttpGet]
@@ -41,13 +47,17 @@ namespace Poco.UserModule.MVC.Controllers
 		[HttpGet]
 		public IActionResult Create()
 		{
-			ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p=> new SelectListItem
-			{
-				Text = p.Name,
-				Value=p.Id
-			}).ToList();
-			return View();
-		}
+            if (AuthChecker.IsPassed(HttpContext, "User", "Create", _context))
+            {
+                ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p => new SelectListItem
+                {
+                    Text = p.Name,
+                    Value = p.Id
+                }).ToList();
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[ActionName("Create")]
@@ -69,7 +79,8 @@ namespace Poco.UserModule.MVC.Controllers
 				};
 				_context.Add(user);
 				_context.SaveChanges();
-				return RedirectToAction("Index", "User");
+                TempData["SuccessMessage"] = "User Created Successfully";
+                return RedirectToAction("Index", "User");
 			}
             ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p => new SelectListItem
             {
@@ -78,11 +89,13 @@ namespace Poco.UserModule.MVC.Controllers
             }).ToList();
             return View(model);
 		}
-        [HttpGet("edit/{Id}")]
+        [HttpGet("[controller]/edit/{Id}")]
         public IActionResult Edit(string Id)
         {
-            UserUpdateViewModel? user = _context.adminUsers.Where(p => p.Id == Id && !p.IsDeleted).Select(p=> new UserUpdateViewModel
+            if (AuthChecker.IsPassed(HttpContext, "User", "Update", _context))
             {
+                UserUpdateViewModel? user = _context.adminUsers.Where(p => p.Id == Id && !p.IsDeleted).Select(p => new UserUpdateViewModel
+                {
                     Name = p.Name.Trim(),
                     UserName = p.UserName.Trim(),
                     Address = p.Address.Trim(),
@@ -92,21 +105,23 @@ namespace Poco.UserModule.MVC.Controllers
                     Email = p.Email.Trim(),
                     Phone = p.Phone.Trim(),
                     IsActive = true
-            }).FirstOrDefault();
+                }).FirstOrDefault();
 
-            if (user == null)
-            {
-                TempData["temp"] = "User Not Found";
-                return RedirectToAction("Index", "User");
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User Not Found";
+                    return RedirectToAction("Index", "User");
+                }
+                ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p => new SelectListItem
+                {
+                    Text = p.Name,
+                    Value = p.Id
+                }).ToList();
+                return View(user);
             }
-            ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p => new SelectListItem
-            {
-                Text = p.Name,
-                Value = p.Id
-            }).ToList();
-            return View(user);
+            return RedirectToAction("Index", "Home");
         }
-        [HttpPost("edit/{Id}")]
+        [HttpPost("[controller]/edit/{Id}")]
         [ValidateAntiForgeryToken]
         [ActionName("Edit")]
         public IActionResult EditAction(string Id, UserCreateViewModel model)
@@ -115,7 +130,7 @@ namespace Poco.UserModule.MVC.Controllers
 
             if (user == null)
             {
-                TempData["temp"] = "User Not Found";
+                TempData["ErrorMessage"] = "User Not Found";
                 return RedirectToAction("Index", "User");
             }
             if (ModelState.IsValid)
@@ -131,6 +146,7 @@ namespace Poco.UserModule.MVC.Controllers
                 user.IsActive = true;
                 _context.Update(user);
                 _context.SaveChanges();
+                TempData["SuccessMessage"] = "User Updated Successfully";
                 return RedirectToAction("Index", "User");
             }
             ViewBag.roleList = _context.roles.Where(p => !p.IsDeleted).Select(p => new SelectListItem
@@ -140,24 +156,28 @@ namespace Poco.UserModule.MVC.Controllers
             }).ToList();
             return View(model);
         }
-        [HttpPost("delete/{Id}")]
+        [HttpPost("[controller]/delete/{Id}")]
         [ActionName("Delete")]
         public IActionResult Delete(string Id)
         {
-            AdminUser? user = _context.adminUsers.Where(p => p.Id == Id && !p.IsDeleted).FirstOrDefault();
-            if (user == null)
+            if (AuthChecker.IsPassed(HttpContext, "User", "Delete", _context))
             {
-                TempData["temp"] = "User Not Found";
+                AdminUser? user = _context.adminUsers.Where(p => p.Id == Id && !p.IsDeleted).FirstOrDefault();
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User Not Found";
+                    return RedirectToAction("Index", "User");
+                }
+                if (ModelState.IsValid)
+                {
+                    user.IsDeleted = true;
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    TempData["SuccessMessage"] = "User Deleted Successfully";
+                }
                 return RedirectToAction("Index", "User");
             }
-            if (ModelState.IsValid)
-            {
-                user.IsDeleted = true;
-                _context.Update(user);
-                _context.SaveChanges();
-                TempData["temp"] = "User Deleted Successfully";
-            }
-            return RedirectToAction("Index", "User");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

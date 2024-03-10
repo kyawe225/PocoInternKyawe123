@@ -1,4 +1,9 @@
-﻿<div class="container">
+﻿@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css" />
+}
+<div class="container">
+    <div><h2>User List</h2></div>
+    <a class="btn btn-primary" href='@Url.Action("Create","User")'>Create</a>
     <table class="datatable">
         <thead>
             <tr>

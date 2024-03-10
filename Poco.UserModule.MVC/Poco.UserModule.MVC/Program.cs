@@ -10,7 +10,12 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<Context>(p => p.UseNpgsql(builder.Configuration.GetConnectionString("local")));
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(p =>
+{
+	p.LoginPath = new PathString("/auth/login");
+	p.LogoutPath = new PathString("/auth/logout");
+	p.Cookie.HttpOnly = true;
+});
 
 var app = builder.Build();
 

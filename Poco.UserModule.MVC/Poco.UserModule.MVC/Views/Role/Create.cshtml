@@ -7,8 +7,25 @@
             <input type="text" class="form-control" asp-for="Name"  />
             <span class="text-danger"></span>
         </div>
-        <div>
-            <input type="submit" value="Save" />
+        
+            @foreach (var i in ViewBag.permission)
+            {
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    @i.Key
+                </div>
+                
+                @foreach(var j in i.Children)
+                {
+                    <div class="col-md-3">
+                        <input type="checkbox" name="PermissionList[]" value="@j.Id" @(Model.PermissionList.Any(p=> p==j.Id) ? "checked" : "") />
+                        @j.Features.Name
+                    </div>
+                }
+            </div>
+            }
+        <div class="mb-2">
+            <input type="submit" class="btn btn-primary" value="Save" />
         </div>
     </form>
 </div>

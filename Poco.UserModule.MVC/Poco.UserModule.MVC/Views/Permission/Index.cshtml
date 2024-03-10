@@ -1,0 +1,15 @@
+﻿@model PermissionFeature
+<div class="container">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-2">
+            <label class="form-label">
+                Name
+            </label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div>
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </div>
+    </form>
+</div>

@@ -1,7 +1,9 @@
 ﻿@section Styles{
-    <link rel="stylesheet" href="~/lib/datatable/css/datatable-bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css" />
 }
 <div class="container">
+    <div><h2>Role List</h2></div>
+    <a class="btn btn-primary" href='@Url.Action("Create","Role")'>Create</a>
     <table class="datatable" style="width:100%">
         <thead>
             <tr>
@@ -13,6 +15,9 @@
                 </td>
                 <td>
                     Created Date
+                </td>
+                <td>
+                    Action
                 </td>
             </tr>
         </thead>
@@ -41,8 +46,26 @@
                     },
                     {
                         data: "dtCreated",orderable: false
+                    },
+                    {
+                        data: null, orderable: false, render: (data) => {
+                            return $("<div />", { html: data.action }).html();
+                        }
                     }
                 ]
+            }).on("click", "tbody .delete", (event) => {
+                event.preventDefault();
+                // call ajax
+                $.ajax({
+                    url: event.target.href,
+                    type: "POST",
+                    success: () => {
+                        window.location.reload();
+                    },
+                    error: (data) => {
+                        console.log(data)
+                    }
+                })
             });
         })
     </script>
